@@ -4,9 +4,10 @@ import Bg_Img_for_Mob from "../assets/Scenora_Mob_Bg.png";
 import { checkValidation } from "../utils/validate";
 import {  createUserWithEmailAndPassword ,signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/slices/userSlice";
+import Header from "../components/Header";
+import { PHOTO_URL } from "../utils/constants";
 
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -14,7 +15,6 @@ const Login = () => {
   const nameRef=useRef(null)
   const emailRef = useRef(null);
   const passwordRef= useRef(null);
-  const navigate=useNavigate()
   const dispatch = useDispatch()
 
   const handleSignInToggle = () => {
@@ -30,15 +30,12 @@ const Login = () => {
       createUserWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value)
   .then((userCredential) => {
     const user = userCredential.user;
-    console.log("usersignup",user);
     updateProfile(user, {
-  displayName: nameRef.current.value, photoURL: "https://lh3.googleusercontent.com/ogw/AF2bZygvRHY5Oan_t7wPWY2X5dyP-fRqMYGISWZU3lhCQxNUrsU=s64-c-mo"
+  displayName: nameRef.current.value, photoURL: PHOTO_URL
 })
 .then(()=>{
   const { uid, email, displayName, photoURL } = auth.currentUser;
 dispatch(addUser({displayName,email,photoURL,uid}))
-    console.log(user)
-    navigate("/browse")
 }).catch((error)=>{
   console.error(error.errorMessage)
 })
@@ -54,8 +51,7 @@ dispatch(addUser({displayName,email,photoURL,uid}))
       signInWithEmailAndPassword(auth, emailRef.current.value, passwordRef.current.value)
   .then((userCredential) => {
     const user = userCredential.user;
-    console.log("usersignin",user);
-    navigate("/browse")
+ 
   })
   .catch((error) => {
     const errorCode = error.code;
@@ -67,6 +63,7 @@ dispatch(addUser({displayName,email,photoURL,uid}))
 
   return (
     <div className="">
+      <Header/>
       <div className="block md:hidden absolute">
         <img
           src={Bg_Img_for_Mob}
